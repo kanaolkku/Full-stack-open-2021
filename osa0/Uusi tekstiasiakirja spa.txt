@@ -1,0 +1,9 @@
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over selain: 
+Selain lähettää palvelimelle uuden pyynnön endpointtiin new_note_spa, joka 
+luo palvelimelle uuden muistiinpanon. selain sitten suorittaa tapahtumankäsittelijän
+joka renderöi muistiinpanot näytölle
+end note
+
+
+https://www.websequencediagrams.com/
