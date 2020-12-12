@@ -4,4 +4,4 @@ Assignments for the course
 **Osa0**
 1.  Uusi muistiinpano
 1.  Single page app
-1.  UUsi muistiinpano spa
+1.  Uusi muistiinpano spa
