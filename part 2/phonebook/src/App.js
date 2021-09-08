@@ -3,7 +3,7 @@ import axios from 'axios';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import Filter from './components/Filter';
-
+import personsService from './services/personsService';
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -13,16 +13,16 @@ const App = () => {
   const [filteredPersons, setFilteredPersons] = useState(persons);
 
   useEffect(() => {
-    console.log("effect");
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
+    personsService
+      .getAll()
+      .then(initialPersons => {
         console.log("promise fulfilled");
-        console.log(response.data)
-        setPersons(response.data)
-        setFilteredPersons(response.data)
+        console.log(initialPersons)
+        setPersons(initialPersons)
+        setFilteredPersons(initialPersons)
       })
   }, [])
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -40,7 +40,6 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-
     const personObject = {
       name: newName,
       number: newNumber
@@ -51,9 +50,24 @@ const App = () => {
       setNewName("");
       setNewNumber("");
     } else {
-      setPersons(persons.concat(personObject))
-      setNewName("");
-      setNewNumber("");
+      personsService
+        .create(personObject)
+        .then(returnedNote => {
+          setPersons(persons.concat(returnedNote));
+          setFilteredPersons(persons.concat(returnedNote));
+          setNewName("");
+          setNewNumber("");
+          setFilter("");
+        })
+    }
+  }
+
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personsService.deletePerson(id);
+      const newArr = persons.filter(p => p.id !== id);
+      setPersons(newArr);
+      setFilteredPersons(newArr);
     }
   }
 
@@ -72,7 +86,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />
     </div>
   )
 
