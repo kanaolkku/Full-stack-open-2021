@@ -1,24 +1,9 @@
 {
   "persons": [
     {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
       "name": "Oliver",
-      "number": "Hoo",
+      "number": "123123213",
       "id": 5
-    },
-    {
-      "name": "Morosano poro",
-      "number": "12312355",
-      "id": 6
-    },
-    {
-      "name": "",
-      "number": "",
-      "id": 7
     },
     {
       "name": "asd",
@@ -41,8 +26,18 @@
       "id": 11
     },
     {
-      "name": "dfgdfgdf",
-      "number": "g234234",
+      "name": "Abdi Muhammed",
+      "number": "123123",
+      "id": 12
+    },
+    {
+      "name": "a",
+      "number": "12345",
+      "id": 13
+    },
+    {
+      "name": "Oliver HOO",
+      "number": "1234",
       "id": 14
     }
   ]

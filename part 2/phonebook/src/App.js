@@ -46,9 +46,26 @@ const App = () => {
     }
 
     if (persons.some(person => person.name === personObject.name)) {
-      alert(`${personObject.name} is already added to phonebook`)
-      setNewName("");
-      setNewNumber("");
+      if (window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)) {
+        let newArr = persons;
+        console.log(newName)
+        const objectIndex = newArr.findIndex(object => object.name === newName);
+        let newObject = newArr[objectIndex];
+        newObject = { ...newObject, number: newNumber };
+        newArr[objectIndex] = newObject;
+
+        personsService
+          .update(newObject.id, newObject)
+          .then(data => console.log(data))
+
+        setPersons(newArr);
+        setFilteredPersons(newArr);
+        setNewName("");
+        setNewNumber("");
+      } else {
+        setNewName("");
+        setNewNumber("");
+      }
     } else {
       personsService
         .create(personObject)
