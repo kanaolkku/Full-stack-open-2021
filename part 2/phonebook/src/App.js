@@ -4,6 +4,7 @@ import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import Filter from './components/Filter';
 import personsService from './services/personsService';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,13 +12,12 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("")
   const [filter, setFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(persons);
+  const [message, setMessage] = useState({ message: "", type: null })
 
   useEffect(() => {
     personsService
       .getAll()
       .then(initialPersons => {
-        console.log("promise fulfilled");
-        console.log(initialPersons)
         setPersons(initialPersons)
         setFilteredPersons(initialPersons)
       })
@@ -38,6 +38,12 @@ const App = () => {
     setFilteredPersons(findPersons)
   }
 
+  const resetMessage = () => {
+    setTimeout(() => {
+      setMessage({ message: "", type: null })
+    }, 2000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
@@ -56,12 +62,20 @@ const App = () => {
 
         personsService
           .update(newObject.id, newObject)
-          .then(data => console.log(data))
-
-        setPersons(newArr);
-        setFilteredPersons(newArr);
+          .then(() => {
+            setPersons(newArr);
+            setFilteredPersons(newArr);
+            setMessage({ message: `Number for ${newObject.name} was changed successfully`, type: "success" });
+            resetMessage();
+          }
+          )
+          .catch(err => {
+            setMessage({ message: `${newObject.name} does not exist, refresh your page and try again`, type: "error" });
+            resetMessage();
+          })
         setNewName("");
         setNewNumber("");
+
       } else {
         setNewName("");
         setNewNumber("");
@@ -75,6 +89,9 @@ const App = () => {
           setNewName("");
           setNewNumber("");
           setFilter("");
+
+          setMessage({ message: `${personObject.name} was added successfully`, type: "success" });
+          resetMessage();
         })
     }
   }
@@ -85,12 +102,19 @@ const App = () => {
       const newArr = persons.filter(p => p.id !== id);
       setPersons(newArr);
       setFilteredPersons(newArr);
+
+      setMessage({ message: `${name} was removed successfully`, type: "success" })
+      resetMessage();
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={message.message}
+        type={message.type}
+      />
       <Filter
         handleFilterChange={handleFilterChange}
         filter={filter} />
