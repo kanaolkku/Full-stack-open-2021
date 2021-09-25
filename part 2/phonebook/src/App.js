@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import Filter from './components/Filter';
@@ -23,6 +22,10 @@ const App = () => {
       })
   }, [])
 
+  const resetFields = () => {
+    setNewName("");
+    setNewNumber("");
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -46,54 +49,51 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    const personObject = {
-      name: newName,
-      number: newNumber
-    }
-
-    if (persons.some(person => person.name === personObject.name)) {
-      if (window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)) {
-        let newArr = persons;
-        console.log(newName)
-        const objectIndex = newArr.findIndex(object => object.name === newName);
-        let newObject = newArr[objectIndex];
-        newObject = { ...newObject, number: newNumber };
-        newArr[objectIndex] = newObject;
-
-        personsService
-          .update(newObject.id, newObject)
-          .then(() => {
-            setPersons(newArr);
-            setFilteredPersons(newArr);
-            setMessage({ message: `Number for ${newObject.name} was changed successfully`, type: "success" });
-            resetMessage();
-          }
-          )
-          .catch(err => {
-            setMessage({ message: `${newObject.name} does not exist, refresh your page and try again`, type: "error" });
-            resetMessage();
-          })
-        setNewName("");
-        setNewNumber("");
-
-      } else {
-        setNewName("");
-        setNewNumber("");
-      }
+    if (newNumber === "") {
+      setMessage({ message: "Please add a number", type: "error" })
     } else {
-      personsService
-        .create(personObject)
-        .then(returnedNote => {
-          setPersons(persons.concat(returnedNote));
-          setFilteredPersons(persons.concat(returnedNote));
-          setNewName("");
-          setNewNumber("");
-          setFilter("");
+      const personObject = {
+        name: newName,
+        number: newNumber
+      }
+      if (persons.some(person => person.name === personObject.name)) {
+        if (window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)) {
+          let newArr = persons;
+          console.log(newName)
+          const objectIndex = newArr.findIndex(object => object.name === newName);
+          let newObject = newArr[objectIndex];
+          newObject = { ...newObject, number: newNumber };
+          newArr[objectIndex] = newObject;
 
-          setMessage({ message: `${personObject.name} was added successfully`, type: "success" });
-          resetMessage();
-        })
+          personsService
+            .update(newObject.id, newObject)
+            .then(() => {
+              setPersons(newArr);
+              setFilteredPersons(newArr);
+              setMessage({ message: `Number for ${newObject.name} was changed successfully`, type: "success" });
+            }
+            )
+            .catch(err => {
+              setMessage({ message: `${newObject.name} does not exist, refresh your page and try again`, type: "error" });
+            })
+          resetFields();
+        } else {
+          resetFields();
+        }
+      } else {
+        personsService
+          .create(personObject)
+          .then(returnedNote => {
+            setPersons(persons.concat(returnedNote));
+            setFilteredPersons(persons.concat(returnedNote));
+            resetFields();
+            setFilter("");
+
+            setMessage({ message: `${personObject.name} was added successfully`, type: "success" });
+          })
+      }
     }
+    resetMessage();
   }
 
   const deletePerson = (id, name) => {
