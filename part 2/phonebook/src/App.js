@@ -49,6 +49,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
+
     if (newNumber === "") {
       setMessage({ message: "Please add a number", type: "error" })
     } else {
@@ -90,6 +91,9 @@ const App = () => {
             setFilter("");
 
             setMessage({ message: `${personObject.name} was added successfully`, type: "success" });
+          })
+          .catch(err => {
+            setMessage({ message: err.response.data.error, type: "error" })
           })
       }
     }
